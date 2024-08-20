@@ -1,0 +1,37 @@
+﻿@page "/counter"
+@implements IDisposable
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+@if (true)
+{
+    int i = 1;
+}
+
+<p role="status">Current count: @counterStore.GetState().Count</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+    @inject CounterStore counterStore
+
+    @inject IActionDispatcher actionDispatcher
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        counterStore.AddStateChangeListners(UpdateView);
+    }
+    private void UpdateView()
+    {
+        StateHasChanged();
+    }
+    private void IncrementCount()
+    {
+        actionDispatcher.Dispatch(new IncrementAction());
+    }
+    public void Dispose()
+    {
+        counterStore.RemoveStateChangeListners(UpdateView);
+    }
+}
